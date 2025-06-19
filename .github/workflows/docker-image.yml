@@ -43,11 +43,16 @@ jobs:
           registry: https://ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      
+
+      - name: dump values
+        run: |
+          echo "ghcr.io/abcdesktopio/mongo:${{ env.imagetag }}"
+          echo "branch:${{ env.branch }}"
+          
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          platforms: linux/amd64, linux/arm64
+          platforms: linux/amd64
           context: .
           file: Dockerfile
           push: true
