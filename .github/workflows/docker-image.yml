@@ -59,4 +59,4 @@ jobs:
           build-args: |
             branch:${{ env.branch }}
           tags: |
-            ghcr.io/abcdesktopio/mongo:${{ env.imagetag }}
+            ghcr.io/abcdesktopio/safemongo:${{ env.imagetag }}
