@@ -54,4 +54,4 @@ jobs:
           build-args: |
             branch:${{ env.branch }}
           tags: |
-            ghcr.io/abcdesktopio/keysgenerator:${{ env.imagetag }}
+            ghcr.io/abcdesktopio/mongo:${{ env.imagetag }}
