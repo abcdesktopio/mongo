@@ -61,28 +61,28 @@ jobs:
           high=$(jq '[.Results[].Vulnerabilities[]? | select(.Severity=="HIGH")] | length' trivy.json)
 
           if [ "$vulns" -eq 0 ]; then
-            color="brightgreen"
+            color="#AF0"
             message="0 vulns"
           elif [ "$crit" -gt 0 ]; then
-            color="red"
+            color="#F00"
             message="${crit} critical"
           elif [ "$high" -gt 0 ]; then
-            color="orange"
+            color="#FFA500"
             message="${high} high"
           else
-            color="yellow"
+            color="#FFFF00"
             message="${vulns} vulns"
           fi
 
           mkdir -p public
-          cat > public/badge.json <<EOF
-          {
-            "schemaVersion": 1,
-            "label": "Trivy",
-            "message": "$message",
-            "color": "$color"
-          }
-          EOF
+          # cat > public/badge.json <<EOF
+          # {
+          #   "schemaVersion": 1,
+          #   "label": "Trivy",
+          #   "message": "$message",
+          #   "color": "$color"
+          # }
+          # EOF
           cat > public/trivy.svg <<EOF
             <svg xmlns="http://www.w3.org/2000/svg" width="120" height="20" role="img" aria-label="Trivy: $message">
             <title>Trivy: $message</title>
@@ -102,15 +102,6 @@ jobs:
             </g>
           </svg>
           EOF
-
-      # - name: Upload badge to GitHub Release
-      #   uses: softprops/action-gh-release@v1
-      #   with:
-      #     tag_name: badges
-      #     files: ./public/trivy.svg
-      #     overwrite: true
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
