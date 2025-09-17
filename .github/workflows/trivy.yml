@@ -44,10 +44,14 @@ jobs:
       # ----------------------------
       # Ajout : génération du badge
       # ----------------------------
+
       - name: Run Trivy vulnerability scanner (JSON)
-        run: |
-          trivy image --severity CRITICAL,HIGH,MEDIUM,LOW --format json \
-            -o trivy.json docker.io/my-organization/my-app:${{ github.sha }}
+        uses: aquasecurity/trivy-action@0.16.1
+        with:
+          image-ref: 'docker.io/my-organization/my-app:${{ github.sha }}'
+          format: 'json'
+          output: 'trivy.json'
+          severity: 'CRITICAL,HIGH,MEDIUM,LOW'
 
       - name: Create badge.json
         run: |
