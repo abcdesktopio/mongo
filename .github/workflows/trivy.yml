@@ -62,6 +62,7 @@ jobs:
 
           if [ "$vulns" -eq 0 ]; then
             bg_color="#38b000"
+            txt_color="#000"
             message="0 vulns"
           elif [ "$crit" -gt 0 ]; then
             bg_color="#F00"
