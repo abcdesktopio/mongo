@@ -12,6 +12,6 @@
     <text x="30" y="15" fill="#010101" fill-opacity=".3">Trivy</text>
     <text x="30" y="14">Trivy</text>
     <text x="90" y="15" fill="#010101" fill-opacity=".3">0 vulns</text>
-    <text x="90" y="14" fill="">0 vulns</text>
+    <text x="90" y="14" fill="#000">0 vulns</text>
   </g>
 </svg>
