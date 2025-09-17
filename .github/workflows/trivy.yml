@@ -90,10 +90,10 @@ jobs:
       #     publish_dir: ./public
       #     publish_branch: gh-pages
 
-      - name: Upload to GitHub Release
-        uses: ncipollo/release-action@v1
-        with:
-          allowUpdates: true
-          artifacts: ./public/trivy.json
-          tag: default
-          token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Upload badge to GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: trivy-badge
+        files: ./public/badge.json
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
