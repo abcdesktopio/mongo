@@ -83,17 +83,10 @@ jobs:
           }
           EOF
 
-      # - name: Deploy badge.json to gh-pages
-      #   uses: peaceiris/actions-gh-pages@v4
-      #   with:
-      #     github_token: ${{ secrets.GITHUB_TOKEN }}
-      #     publish_dir: ./public
-      #     publish_branch: gh-pages
-
-    - name: Upload badge to GitHub Release
-      uses: softprops/action-gh-release@v1
-      with:
-        tag_name: trivy-badge
-        files: ./public/badge.json
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload badge to GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: trivy-badge
+          files: ./public/badge.json
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
