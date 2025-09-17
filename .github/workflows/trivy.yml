@@ -14,7 +14,8 @@ permissions:
 jobs:
   build:
     permissions:
-      contents: write
+      contents: read
+      pages: write
       security-events: write
       actions: read
     name: Build
@@ -102,11 +103,18 @@ jobs:
           </svg>
           EOF
 
-      - name: Upload badge to GitHub Release
-        uses: softprops/action-gh-release@v1
+      # - name: Upload badge to GitHub Release
+      #   uses: softprops/action-gh-release@v1
+      #   with:
+      #     tag_name: badges
+      #     files: ./public/trivy.svg
+      #     overwrite: true
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
         with:
-          tag_name: badges
-          files: ./public/trivy.svg
-          overwrite: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
+          publish_branch: gh-pages
