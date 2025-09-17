@@ -14,10 +14,10 @@ permissions:
 jobs:
   build:
     permissions:
-      contents: read
+      contents: write
       pages: write
       security-events: write
-      actions: read
+      actions: write
     name: Build
     runs-on: ubuntu-latest
     steps:
