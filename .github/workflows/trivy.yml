@@ -95,5 +95,4 @@ jobs:
         with:
           allowUpdates: true
           artifacts: ./public/trivy.json
-          tag: default
           token: ${{ secrets.GITHUB_TOKEN }}
