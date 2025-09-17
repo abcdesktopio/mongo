@@ -1,6 +1,6 @@
 # mongo
 
-![CI](https://github.com/abcdesktopio/mongo/actions/workflows/docker-image.yml/badge.svg)![Trivy Scan](https://img.shields.io/endpoint?url=https://github.com/abcdesktopio/mongo/releases/download/trivy-badge/badge.json)
+![CI](https://github.com/abcdesktopio/mongo/actions/workflows/docker-image.yml/badge.svg) ![Trivy Scan](https://github.com/abcdesktopio/mongo/releases/download/badges/trivy.svg)
 
 
 
