@@ -1,11 +1,6 @@
 # mongo
 
 ![CI](https://github.com/abcdesktopio/mongo/actions/workflows/docker-image.yml/badge.svg)
-<:-- ![Trivy Scan](https://github.com/abcdesktopio/mongo/releases/download/badges/trivy.svg)
--->
-
-
-
 
 MongoDB docker image including cve fixes:
 * add a recompiled /usr/locall/bin/gosu binary with last GO and libraries.
