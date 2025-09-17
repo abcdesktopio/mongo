@@ -18,7 +18,10 @@ on:
     - cron: '41 17 * * 0'
 
 permissions:
-  contents: read
+      contents: write
+      pages: write
+      security-events: write
+      actions: write
 
 jobs:
   hadolint:
@@ -45,3 +48,52 @@ jobs:
         with:
           sarif_file: hadolint-results.sarif
           wait-for-processing: true
+
+      # ----------------------------
+      # Badge SVG Hadolint
+      # ----------------------------
+      - name: Generate badge SVG
+        run: |
+          mkdir -p public
+          # compter les issues Hadolint dans le SARIF
+          issues=$(jq '[.runs[].results[]?] | length' hadolint-results.sarif)
+
+          # définir couleur et message
+          if [ "$issues" -eq 0 ]; then
+            color="#4c1"
+            message="0 issues"
+          elif [ "$issues" -le 5 ]; then
+            color="#fe7d37"
+            message="$issues issues"
+          else
+            color="#e05d44"
+            message="$issues issues"
+          fi
+
+          # créer badge SVG
+          cat > public/hadolint-badge.svg <<EOF
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="20" role="img" aria-label="Hadolint: $message">
+  <title>Hadolint: $message</title>
+  <linearGradient id="s" x2="0" y2="100%">
+    <stop offset="0" stop-color="#bbb" stop-opacity=".1"/>
+    <stop offset="1" stop-opacity=".1"/>
+  </linearGradient>
+  <rect rx="3" width="60" height="20" fill="#555"/>
+  <rect rx="3" x="60" width="60" height="20" fill="$color"/>
+  <path fill="$color" d="M60 0h4v20h-4z"/>
+  <rect rx="3" width="120" height="20" fill="url(#s)"/>
+  <g fill="#fff" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">
+    <text x="30" y="15" fill="#010101" fill-opacity=".3">Hadolint</text>
+    <text x="30" y="14">Hadolint</text>
+    <text x="90" y="15" fill="#010101" fill-opacity=".3">$message</text>
+    <text x="90" y="14">$message</text>
+  </g>
+</svg>
+EOF
+
+      - name: Deploy badge to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public/hadolint-badge.svg
+          publish_branch: gh-pages
