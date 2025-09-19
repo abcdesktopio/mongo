@@ -1,4 +1,4 @@
-FROM mongo:4.4
+FROM mongo:8.0
 
 ARG TARGETPLATFORM
 RUN apt update|| true \
