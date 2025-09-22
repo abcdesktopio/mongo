@@ -1,8 +1,8 @@
 FROM mongo:8.0
 
 ARG TARGETPLATFORM
-# RUN apt update|| true \
-#  && apt upgrade -y \
+RUN apt update|| true \
+ && apt upgrade -y
 #  && apt-get install -y --no-install-recommends \
 #         curl \
 #         ca-certificates \
