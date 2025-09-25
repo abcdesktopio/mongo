@@ -1,10 +1,7 @@
-FROM mongo:8.0
+FROM mongo:8.0.14-noble
 
-ARG TARGETPLATFORM
-RUN apt update|| true \
- && apt upgrade -y
-#  && apt-get install -y --no-install-recommends \
-#         curl \
-#         ca-certificates \
-#  && curl -L https://github.com/abcdesktopio/gosu/releases/download/1.17/gosu-$(echo "$TARGETPLATFORM"|cut -d'/' -f 2) \
-#          -o /usr/local/bin/gosu
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends \
+    curl \
+    ca-certificates \
+ && rm -rf /var/lib/apt/lists/*
