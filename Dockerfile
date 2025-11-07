@@ -23,7 +23,7 @@ ARG MONGO_TOOLS_VERSION
 ARG GOSU_VERSION
 ARG GO_VERSION
 
-# Install required build dependencies
+# Install dependencies, clone and build MongoDB tools
 RUN apt-get update && \
     apt-get install -y \
         git \
@@ -33,10 +33,8 @@ RUN apt-get update && \
         autoconf \
         automake \
         libtool && \
-    rm -rf /var/lib/apt/lists/*
-
-# Clone MongoDB Database Tools repository and checkout the specified tag
-RUN git clone https://github.com/mongodb/mongo-tools.git /src && \
+    rm -rf /var/lib/apt/lists/* && \
+    git clone https://github.com/mongodb/mongo-tools.git /src && \
     cd /src && git checkout tags/${MONGO_TOOLS_VERSION} --quiet
 
 # Compile each MongoDB tool individually
@@ -47,37 +45,54 @@ RUN for dir in bsondump mongodump mongoexport mongofiles mongoimport mongorestor
 
 # Download and extract gosu source
 RUN wget -O /tmp/gosu.tar.gz "https://github.com/tianon/gosu/archive/refs/tags/${GOSU_VERSION}.tar.gz" && \
-    tar -xzf /tmp/gosu.tar.gz -C /tmp
+    tar -xzf /tmp/gosu.tar.gz -C /tmp && \
+    rm /tmp/gosu.tar.gz    
 
 WORKDIR /tmp/gosu-${GOSU_VERSION}
 
 # Build gosu using recommended flags
-ENV BUILD_FLAGS="-v -trimpath -ldflags=-s -ldflags=-w -buildvcs=true"
-ENV CGO_ENABLED=0
-RUN go build $BUILD_FLAGS -o /usr/local/bin/gosu .
+RUN CGO_ENABLED=0 go build \
+    -v \
+    -trimpath \
+    -ldflags="-s -w" \
+    -buildvcs=true \
+    -o /usr/local/bin/gosu .
+
+# Verify compiled binaries
+RUN /usr/local/bin/gosu --version && \
+    for tool in bsondump mongodump mongoexport mongofiles mongoimport mongorestore mongostat mongotop; do \
+        /usr/local/bin/$tool --version || echo "Warning: $tool version check failed"; \
+    done    
 
 # -------------------------------------------------------------------
 # Stage 2: Final MongoDB image
 # -------------------------------------------------------------------
 FROM mongo:${MONGO_VERSION}
 
-# Switch to root to copy binaries and update the system
-USER root
+# Redefine ARGs for labels
+ARG GO_VERSION
+ARG MONGO_TOOLS_VERSION
+ARG GOSU_VERSION
+
+LABEL mongo.tools.version="${MONGO_TOOLS_VERSION}"
+LABEL gosu.version="${GOSU_VERSION}"
+LABEL go.build.version="${GO_VERSION}"
 
 RUN apt-get update && \
     apt-get upgrade -y && \
     rm -rf /var/lib/apt/lists/*
 
 # Copy only the necessary binaries from builder
-COPY --from=builder /usr/local/bin/bsondump     /usr/bin/bsondump
-COPY --from=builder /usr/local/bin/mongodump    /usr/bin/mongodump
-COPY --from=builder /usr/local/bin/mongoexport  /usr/bin/mongoexport
-COPY --from=builder /usr/local/bin/mongofiles   /usr/bin/mongofiles
-COPY --from=builder /usr/local/bin/mongoimport  /usr/bin/mongoimport
-COPY --from=builder /usr/local/bin/mongorestore /usr/bin/mongorestore
-COPY --from=builder /usr/local/bin/mongostat    /usr/bin/mongostat
-COPY --from=builder /usr/local/bin/mongotop     /usr/bin/mongotop
-COPY --from=builder /usr/local/bin/gosu         /usr/local/bin/gosu
+COPY --from=builder /usr/local/bin/gosu /usr/local/bin/gosu
+COPY --from=builder /usr/local/bin/bsondump \
+                    /usr/local/bin/mongodump \
+                    /usr/local/bin/mongoexport \
+                    /usr/local/bin/mongofiles \
+                    /usr/local/bin/mongoimport \
+                    /usr/local/bin/mongorestore \
+                    /usr/local/bin/mongostat \
+                    /usr/local/bin/mongotop \
+                    /usr/bin/
 
 # Set correct permissions
 RUN for tool in bsondump mongodump mongoexport mongofiles mongoimport mongorestore mongostat mongotop; do \
@@ -85,19 +100,21 @@ RUN for tool in bsondump mongodump mongoexport mongofiles mongoimport mongoresto
         chmod 755 /usr/bin/$tool ; \
     done
 
-# Expose MongoDB default port
-EXPOSE 27017
+# The following instructions are inherited from the mongo:${MONGO_VERSION} base image
+# ENTRYPOINT, EXPOSE, and CMD are not redefined to maintain
+# compatibility with future versions of the official image
 
-# Use the official Mongo entrypoint and command
-ENTRYPOINT ["docker-entrypoint.sh"]
-CMD ["mongod"]
+# Inherited from official MongoDB image:
+# ENTRYPOINT ["docker-entrypoint.sh"]
+# EXPOSE 27017
+# CMD ["mongod"]
 
 # -------------------------------------------------------------------
 # Notes:
 # - Only required binaries are copied to the final image to reduce size and attack surface.
 # - Both MongoDB Database Tools and gosu are recompiled with Go ${GO_VERSION} to avoid vulnerabilities.
 # - To use a different version of the tools or gosu, override ARGs at build time:
-#       docker build --build-arg MONGO_TOOLS_VERSION=v100.xx.x \
+#       docker build --build-arg MONGO_TOOLS_VERSION=100.14.0 \
 #                    --build-arg GOSU_VERSION=1.20 ...
 # - Permissions are set to ubuntu:ubuntu for all binaries, in line with standard security practices.
 # -------------------------------------------------------------------
