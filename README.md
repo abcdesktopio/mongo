@@ -4,47 +4,47 @@
 
 Secure and reliable MongoDB 8.0 Docker image with integrated CVE fixes, rebuilt binaries, and an up-to-date base OS. Ideal for both development and production.
 
-## 🚀 Key Features
+## Key Features
 
-- ✅ Recompiled binaries with latest Go and libraries:
+- Recompiled binaries with latest Go and libraries:
 ```
 bsondump, mongodump, mongoexport, mongofiles, mongoimport, mongorestore, mongostat, mongotop, gosu
 ```
-- 🆕 Updated base OS: apt update && apt upgrade ensures the latest security patches
+- Updated base OS: apt update && apt upgrade ensures the latest security patches
 
-- 🛡️ Continuous security scanning: Trivy badge reflects the current vulnerability status
+- Continuous security scanning: Trivy badge reflects the current vulnerability status
 
-- ⚡ Easy deployment: ready-to-use, stable, and secure
+- Easy deployment: ready-to-use, stable, and secure
 
-## 🧾 Trivy Security Scan Summary
+## Trivy Security Scan Summary
 | Target                                              | Type     | Vulnerabilities | Status                         |
 | --------------------------------------------------- | -------- | --------------- | ------------------------------ |
-| `ghcr.io/abcdesktopio/mongo:safe8.0` (Ubuntu 24.04) | ubuntu   | 15              | ⚠️ Base OS CVEs — no fixes yet |
-| MongoDB tools & `gosu`                              | gobinary | 0               | ✅ Clean                        |
-| `opt/js-yaml/package.json`                          | node-pkg | 0               | ✅ Clean                        |
+| `ghcr.io/abcdesktopio/mongo:safe8.0` (Ubuntu 24.04) | ubuntu   | 15              | Base OS CVEs — no fixes yet |
+| MongoDB tools & `gosu`                              | gobinary | 0               | Clean                        |
+| `opt/js-yaml/package.json`                          | node-pkg | 0               | Clean                        |
 
 
 ## Summary:
 
-- ✅ All custom and recompiled binaries are fully patched
+- All custom and recompiled binaries are fully patched
 
-- ⚠️ Remaining vulnerabilities come from the Ubuntu 24.04 base image
+- Remaining vulnerabilities come from the Ubuntu 24.04 base image
 
-- 🔄 Image is rebuilt and updated automatically when fixes are available
+- Image is rebuilt and updated automatically when fixes are available
 
-## 🔒 Security Policy
+## Security Policy
 
-- 🔍 Regular Scans – Continuous Trivy scans monitor OS and binary vulnerabilities
+- Regular Scans – Continuous Trivy scans monitor OS and binary vulnerabilities
 
-- 🛠️ Patched Binaries – All MongoDB tools and gosu are recompiled with latest Go & libraries
+- Patched Binaries – All MongoDB tools and gosu are recompiled with latest Go & libraries
 
-- 📦 Base OS Updates – apt update && apt upgrade ensures up-to-date packages
+- Base OS Updates – apt update && apt upgrade ensures up-to-date packages
 
-- 🚨 CVE Monitoring – Critical vulnerabilities are patched in rebuilt images promptly
+- CVE Monitoring – Critical vulnerabilities are patched in rebuilt images promptly
 
-- 🤝 Community Reporting – Users can report security issues via GitHub Issues
+- Community Reporting – Users can report security issues via GitHub Issues
 
-## 📦 Quick Start
+## Quick Start
 
 Pull the image:
 ```
@@ -72,7 +72,7 @@ docker stop mongo8
 docker rm mongo8
 ```
 
-## ✅ Why use this image?
+## Why use this image?
 
 - Secure, up-to-date, and patched binaries
 
