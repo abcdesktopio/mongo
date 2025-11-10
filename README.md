@@ -1,8 +1,81 @@
-# mongo
+# MongoDB Docker Image (8.0)
 
 ![CI](https://github.com/abcdesktopio/mongo/actions/workflows/docker-image.yml/badge.svg) ![Trivy](https://abcdesktopio.github.io/mongo/trivy.svg)
 
-MongoDB docker image including cve fixes:
-* add a recompiled /usr/locall/bin/gosu binary with last GO and libraries.
-* add a layer to run `apt update` and `apt upgrade`.
+Secure and reliable MongoDB 8.0 Docker image with integrated CVE fixes, rebuilt binaries, and an up-to-date base OS. Ideal for both development and production.
 
+## 🚀 Key Features
+
+- ✅ Recompiled binaries with latest Go and libraries:
+```
+bsondump, mongodump, mongoexport, mongofiles, mongoimport, mongorestore, mongostat, mongotop, gosu
+```
+- 🆕 Updated base OS: apt update && apt upgrade ensures the latest security patches
+
+- 🛡️ Continuous security scanning: Trivy badge reflects the current vulnerability status
+
+- ⚡ Easy deployment: ready-to-use, stable, and secure
+
+## 🧾 Trivy Security Scan Summary
+| Target                                              | Type     | Vulnerabilities | Status                         |
+| --------------------------------------------------- | -------- | --------------- | ------------------------------ |
+| `ghcr.io/abcdesktopio/mongo:safe8.0` (Ubuntu 24.04) | ubuntu   | 15              | ⚠️ Base OS CVEs — no fixes yet |
+| MongoDB tools & `gosu`                              | gobinary | 0               | ✅ Clean                        |
+| `opt/js-yaml/package.json`                          | node-pkg | 0               | ✅ Clean                        |
+
+
+## Summary:
+
+- ✅ All custom and recompiled binaries are fully patched
+
+- ⚠️ Remaining vulnerabilities come from the Ubuntu 24.04 base image
+
+- 🔄 Image is rebuilt and updated automatically when fixes are available
+
+## 🔒 Security Policy
+
+- 🔍 Regular Scans – Continuous Trivy scans monitor OS and binary vulnerabilities
+
+- 🛠️ Patched Binaries – All MongoDB tools and gosu are recompiled with latest Go & libraries
+
+- 📦 Base OS Updates – apt update && apt upgrade ensures up-to-date packages
+
+- 🚨 CVE Monitoring – Critical vulnerabilities are patched in rebuilt images promptly
+
+- 🤝 Community Reporting – Users can report security issues via GitHub Issues
+
+## 📦 Quick Start
+
+Pull the image:
+```
+docker pull ghcr.io/abcdesktopio/mongo:safe8.0
+```
+
+Run a container:
+```
+docker run -d \
+  --name mongo8 \
+  -p 27017:27017 \
+  -e MONGO_INITDB_ROOT_USERNAME=admin \
+  -e MONGO_INITDB_ROOT_PASSWORD=secret \
+  ghcr.io/abcdesktopio/mongo:safe8.0
+```
+
+Access Mongo shell:
+```
+docker exec -it mongo8 mongosh -u admin -p secret
+```
+
+Stop and remove the container:
+```
+docker stop mongo8
+docker rm mongo8
+```
+
+## ✅ Why use this image?
+
+- Secure, up-to-date, and patched binaries
+
+- Monitored and rebuilt automatically for CVEs
+
+- Ready for production and development environments
