@@ -6,31 +6,51 @@ Secure and reliable MongoDB 8.0 Docker image with integrated CVE fixes, rebuilt 
 
 ## Key Features
 
-- Recompiled binaries with latest Go and libraries:
-```
-bsondump, mongodump, mongoexport, mongofiles, mongoimport, mongorestore, mongostat, mongotop, gosu
-```
-- Updated base OS: apt update && apt upgrade ensures the latest security patches
+- **Recompiled binaries** with latest Go 1.25.5 and patched dependencies:
+  ```
+  bsondump, mongodump, mongoexport, mongofiles, mongoimport, mongorestore, mongostat, mongotop, gosu
+  ```
 
-- Continuous security scanning: Trivy badge reflects the current vulnerability status
+- **Patched security vulnerabilities**:
+  - ✅ Go 1.25.5 (fixed CVE-2025-61729, CVE-2025-61727)
+  - ✅ golang.org/x/crypto v0.45.0 (fixed CVE-2025-47914, CVE-2025-58181)
+  - ✅ js-yaml 3.14.2 (fixed CVE-2025-64718)
 
-- Easy deployment: ready-to-use, stable, and secure
+- **Updated base OS**: `apt update && apt upgrade` ensures the latest security patches
+
+- **Continuous security scanning**: Trivy badge reflects the current vulnerability status
+
+- **Easy deployment**: ready-to-use, stable, and secure
 
 ## Trivy Security Scan Summary
-| Target                                              | Type     | Vulnerabilities | Status                         |
-| --------------------------------------------------- | -------- | --------------- | ------------------------------ |
-| `ghcr.io/abcdesktopio/mongo:safe8.0` (Ubuntu 24.04) | ubuntu   | 15              | Base OS CVEs — no fixes yet |
-| MongoDB tools & `gosu`                              | gobinary | 0               | Clean                        |
-| `opt/js-yaml/package.json`                          | node-pkg | 0               | Clean                        |
 
+| Target                                                | Type     | Vulnerabilities | Status                              |
+| ----------------------------------------------------- | -------- | --------------- | ----------------------------------- |
+| `ghcr.io/abcdesktopio/mongo:safe8.0` (Ubuntu 24.04)   | ubuntu   | 15              | Base OS CVEs — no fixes yet         |
+| MongoDB tools & `gosu` (9 binaries)                   | gobinary | **0**           | ✅ Clean — All Go CVEs patched      |
+| `opt/js-yaml/package.json`                            | node-pkg | **0**           | ✅ Clean — js-yaml patched to 3.14.2 |
 
-## Summary:
+**Last scan**: 8 December 2025
 
-- All custom and recompiled binaries are fully patched
+## Summary
 
-- Remaining vulnerabilities come from the Ubuntu 24.04 base image
+- ✅ **All custom and recompiled binaries are fully patched** — 0 vulnerabilities
+- ✅ **All critical Go and Node.js CVEs resolved**
+- ⚠️ Remaining 15 vulnerabilities come from the Ubuntu 24.04 base image (all marked "affected" — no fixes available upstream)
+- 🔄 Image is rebuilt and updated automatically when fixes are available
 
-- Image is rebuilt and updated automatically when fixes are available
+## Patched Vulnerabilities
+
+### Go Vulnerabilities (Fixed)
+- **CVE-2025-61729** (HIGH) — Go stdlib vulnerability
+- **CVE-2025-61727** (MEDIUM) — Go stdlib vulnerability
+- **CVE-2025-47914** (CRITICAL) — golang.org/x/crypto vulnerability
+- **CVE-2025-58181** (HIGH) — golang.org/x/crypto vulnerability
+
+### Node.js Vulnerabilities (Fixed)
+- **CVE-2025-64718** (MEDIUM) — js-yaml code execution vulnerability
+
+All MongoDB Database Tools and gosu binaries are compiled with the patched versions.
 
 ## Security Policy
 
