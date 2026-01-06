@@ -95,7 +95,5 @@ docker rm mongo8
 ## Why use this image?
 
 - Secure, up-to-date, and patched binaries
-
 - Monitored and rebuilt automatically for CVEs
-
 - Ready for production and development environments
