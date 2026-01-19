@@ -1,0 +1,11 @@
+# Makefile
+# trivy-*.txt
+# hadolint-*
+
+mk/
+mkdocs/
+reports/
+scripts/
+.env*
+.hadolint.yaml
+Makefile
