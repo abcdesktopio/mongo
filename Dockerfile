@@ -28,17 +28,19 @@ ARG GO_CRYPTO_VERSION
 
 # Install dependencies, clone and build MongoDB tools
 RUN apt-get update && \
-    apt-get install -y \
-        git \
-        wget \
-        file \
-        build-essential \
-        autoconf \
-        automake \
-        libtool && \
+    apt-get install -y --no-install-recommends \
+        git=1:2.47.* \
+        wget=1.25.* \
+        file=1:5.46-* \
+        build-essential=12.12 \
+        autoconf=2.72-* \
+        automake=1:1.17-* \
+        libtool=2.5.* && \
     rm -rf /var/lib/apt/lists/* && \
-    git clone https://github.com/mongodb/mongo-tools.git /src && \
-    cd /src && git checkout tags/${MONGO_TOOLS_VERSION} --quiet
+    git clone https://github.com/mongodb/mongo-tools.git /src
+
+WORKDIR /src
+RUN git checkout tags/${MONGO_TOOLS_VERSION} --quiet
 
 # Update golang.org/x/crypto to patched version before compilation
 WORKDIR /src
@@ -48,11 +50,14 @@ RUN go get golang.org/x/crypto@v${GO_CRYPTO_VERSION} && \
 
 # Compile each MongoDB tool individually with updated dependencies
 RUN for dir in bsondump mongodump mongoexport mongofiles mongoimport mongorestore mongostat mongotop; do \
-        GOOS=linux GOARCH=amd64 go build -o /usr/local/bin/$dir ./$dir/main; \
+        GOOS=linux GOARCH=amd64 go build \
+        -trimpath \
+        -ldflags="-s -w -X main.VersionStr=${MONGO_TOOLS_VERSION} -X main.GitCommit=secure-build" \
+        -o /usr/local/bin/$dir ./$dir/main; \
     done
 
 # Download and extract gosu source
-RUN wget -O /tmp/gosu.tar.gz "https://github.com/tianon/gosu/archive/refs/tags/${GOSU_VERSION}.tar.gz" && \
+RUN wget --progress=dot:giga -O /tmp/gosu.tar.gz "https://github.com/tianon/gosu/archive/refs/tags/${GOSU_VERSION}.tar.gz" && \
     tar -xzf /tmp/gosu.tar.gz -C /tmp && \
     rm /tmp/gosu.tar.gz    
 
@@ -95,13 +100,12 @@ LABEL js.yaml.version="${JS_YAML_VERSION}"
 # Download and extract the specific version without installing npm and its dependencies
 RUN apt-get update && \
     apt-get upgrade -y && \
-    apt-get install -y curl && \
+    apt-get install -y --no-install-recommends curl=8.5.* && \
     if [ -d /opt/js-yaml ]; then \
-        cd /opt/js-yaml && \
-        curl -L -o js-yaml.tar.gz "https://registry.npmjs.org/js-yaml/-/js-yaml-${JS_YAML_VERSION}.tgz" && \
-        tar -xzf js-yaml.tar.gz && \
-        cp -rf package/* . && \
-        rm -rf package js-yaml.tar.gz; \
+        curl -L -o /opt/js-yaml/js-yaml.tar.gz "https://registry.npmjs.org/js-yaml/-/js-yaml-${JS_YAML_VERSION}.tgz" && \
+        tar -xzf /opt/js-yaml/js-yaml.tar.gz -C /opt/js-yaml && \
+        cp -rf /opt/js-yaml/package/* /opt/js-yaml/ && \
+        rm -rf /opt/js-yaml/package /opt/js-yaml/js-yaml.tar.gz; \
     fi && \
     apt-get remove -y curl && \
     apt-get autoremove -y && \
