@@ -7,7 +7,7 @@
 # Declare global ARGs (default values)
 # Can be overridden at build time with --build-arg
 # -------------------------------------------------------------------
-ARG GO_VERSION=1.25.5            # Go version used to build the tools
+ARG GO_VERSION=1.25.6            # Go version used to build the tools
 ARG MONGO_VERSION=8.0            # Final official MongoDB image version
 ARG MONGO_TOOLS_VERSION=100.13.0 # MongoDB Database Tools version to compile
 ARG GOSU_VERSION=1.19            # gosu version to compile
