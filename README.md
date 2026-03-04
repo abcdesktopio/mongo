@@ -6,10 +6,11 @@ Secure and up-to-date MongoDB 8.0 Docker image for development and production.
 
 ## Features
 
-- Recompiled MongoDB tools and binaries with the latest security patches (Go 1.25.6, js-yaml 3.14.2, etc.)
-- Based on Ubuntu 24.04, regularly updated
+- MongoDB tools and binaries recompiled with the latest available security patches
+- Based on a recent and regularly updated Ubuntu LTS base image
 - Continuous security scanning (Trivy)
 - Easy to use and deploy
+
 
 ## Quick Start
 
@@ -39,12 +40,12 @@ docker stop mongo8
 docker rm mongo8
 ```
 
-## Security (Trivy Scan)
+## Security
 
-- All MongoDB tools, gosu, and js-yaml are fully patched (0 vulnerabilities)
-- 20 vulnerabilities remain in the Ubuntu 24.04 base image (0 critical, 0 high, 8 medium, 12 low; no upstream fix yet)
-- The image is rebuilt automatically when new fixes are available
+- All included binaries and dependencies are regularly updated and rebuilt with upstream security patches.
+- The image is scanned automatically for vulnerabilities and rebuilt as needed.
+- For details on the latest security status, refer to the Trivy scan badge and release notes.
 
 ---
 
-This image is monitored and maintained for security and stability.
+This image is actively maintained for security and stability. For more information, see the documentation or open an issue.
