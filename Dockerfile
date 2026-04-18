@@ -51,7 +51,7 @@ RUN go get golang.org/x/crypto@v${GO_CRYPTO_VERSION} && \
 # map 
 # 'x86_64'   -> amd64
 # 'aarch64'  -> arm64
-RUN MACHINE=$(uname --machine) && 
+RUN MACHINE=$(uname --machine) && \
     if [ $MACHINE = 'x86_64' ];  then GOARCH=amd64; fi && \ 
     if [ $MACHINE = 'aarch64' ]; then GOARCH=arm64; fi && \
     echo building for $GOARCH && \
