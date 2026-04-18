@@ -48,9 +48,15 @@ RUN go get golang.org/x/crypto@v${GO_CRYPTO_VERSION} && \
     go mod tidy && \
     go mod vendor
 
-# Compile each MongoDB tool individually with updated dependencies
-RUN for dir in bsondump mongodump mongoexport mongofiles mongoimport mongorestore mongostat mongotop; do \
-        GOOS=linux GOARCH=amd64 go build \
+# map 
+# 'x86_64'   -> amd64
+# 'aarch64'  -> arm64
+RUN MACHINE=$(uname --machine) && 
+    if [ $MACHINE = 'x86_64' ];  then GOARCH=amd64; fi && \ 
+    if [ $MACHINE = 'aarch64' ]; then GOARCH=arm64; fi && \
+    echo building for $GOARCH \
+    for dir in bsondump mongodump mongoexport mongofiles mongoimport mongorestore mongostat mongotop; do \
+        GOOS=linux GOARCH=$GOARCH go build \
         -trimpath \
         -ldflags="-s -w -X main.VersionStr=${MONGO_TOOLS_VERSION} -X main.GitCommit=secure-build" \
         -o /usr/local/bin/$dir ./$dir/main; \
