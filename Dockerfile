@@ -54,7 +54,7 @@ RUN go get golang.org/x/crypto@v${GO_CRYPTO_VERSION} && \
 RUN MACHINE=$(uname --machine) && 
     if [ $MACHINE = 'x86_64' ];  then GOARCH=amd64; fi && \ 
     if [ $MACHINE = 'aarch64' ]; then GOARCH=arm64; fi && \
-    echo building for $GOARCH \
+    echo building for $GOARCH && \
     for dir in bsondump mongodump mongoexport mongofiles mongoimport mongorestore mongostat mongotop; do \
         GOOS=linux GOARCH=$GOARCH go build \
         -trimpath \
