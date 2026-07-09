@@ -7,12 +7,14 @@
 # Declare global ARGs (default values)
 # Can be overridden at build time with --build-arg
 # -------------------------------------------------------------------
-ARG GO_VERSION=1.25.7            # Go version used to build the tools
+ARG GO_VERSION=1.26.5            # Correctif CVEs
+ARG GO_CRYPTO_VERSION=0.52.0     # Correctif CVEs
+ARG GO_NET_VERSION=0.55.0        # Correctif CVEs
+ARG GOSU_VERSION=1.19            # Correctif CVEs
+ARG JS_YAML_VERSION=3.15.0       # Correctif CVEs
+ARG MONGO_DRIVER_VERSION=1.17.7  # Correctif CVEs
 ARG MONGO_VERSION=8.0            # Final official MongoDB image version
 ARG MONGO_TOOLS_VERSION=100.13.0 # MongoDB Database Tools version to compile
-ARG GOSU_VERSION=1.19            # gosu version to compile
-ARG GO_CRYPTO_VERSION=0.45.0     # golang.org/x/crypto version for security patches
-ARG JS_YAML_VERSION=3.14.2       # js-yaml version for security patches (CVE-2025-64718)
 
 # -------------------------------------------------------------------
 # Stage 1: Builder
@@ -21,10 +23,14 @@ ARG JS_YAML_VERSION=3.14.2       # js-yaml version for security patches (CVE-202
 FROM golang:${GO_VERSION} AS builder
 
 # Redefine ARGs in this stage
-ARG MONGO_TOOLS_VERSION
-ARG GOSU_VERSION
 ARG GO_VERSION
 ARG GO_CRYPTO_VERSION
+ARG GO_NET_VERSION
+ARG GOSU_VERSION
+ARG JS_YAML_VERSION
+ARG MONGO_DRIVER_VERSION
+ARG MONGO_VERSION
+ARG MONGO_TOOLS_VERSION
 
 # Install dependencies, clone and build MongoDB tools
 RUN apt-get update && \
@@ -42,9 +48,11 @@ RUN apt-get update && \
 WORKDIR /src
 RUN git checkout tags/${MONGO_TOOLS_VERSION} --quiet
 
-# Update golang.org/x/crypto to patched version before compilation
+# Update dependencies to patched version before compilation of mongo-tools
 WORKDIR /src
 RUN go get golang.org/x/crypto@v${GO_CRYPTO_VERSION} && \
+    go get golang.org/x/net@v${GO_NET_VERSION} && \
+    go get go.mongodb.org/mongo-driver@v${MONGO_DRIVER_VERSION} && \
     go mod tidy && \
     go mod vendor
 
@@ -52,9 +60,9 @@ RUN go get golang.org/x/crypto@v${GO_CRYPTO_VERSION} && \
 # 'x86_64'   -> amd64
 # 'aarch64'  -> arm64
 RUN MACHINE=$(uname --machine) && \
-    if [ $MACHINE = 'x86_64' ];  then GOARCH=amd64; fi && \ 
-    if [ $MACHINE = 'aarch64' ]; then GOARCH=arm64; fi && \
-    echo building for $GOARCH && \
+    if [ "$MACHINE" = 'x86_64' ];  then GOARCH=amd64; fi && \ 
+    if [ "$MACHINE" = 'aarch64' ]; then GOARCH=arm64; fi && \
+    echo building for "$GOARCH" && \
     for dir in bsondump mongodump mongoexport mongofiles mongoimport mongorestore mongostat mongotop; do \
         GOOS=linux GOARCH=$GOARCH go build \
         -trimpath \
@@ -69,7 +77,7 @@ RUN wget --progress=dot:giga -O /tmp/gosu.tar.gz "https://github.com/tianon/gosu
 
 WORKDIR /tmp/gosu-${GOSU_VERSION}
 
-# Update golang.org/x/crypto for gosu and build with recommended flags
+# Update dependencies for gosu and build with recommended flags
 RUN go get golang.org/x/crypto@v${GO_CRYPTO_VERSION} && \
     go mod tidy && \
     go mod vendor && \
@@ -93,16 +101,24 @@ FROM mongo:${MONGO_VERSION}
 
 # Redefine ARGs for labels
 ARG GO_VERSION
-ARG MONGO_TOOLS_VERSION
+ARG GO_CRYPTO_VERSION
+ARG GO_NET_VERSION
 ARG GOSU_VERSION
 ARG JS_YAML_VERSION
+ARG MONGO_DRIVER_VERSION
+ARG MONGO_VERSION
+ARG MONGO_TOOLS_VERSION
 
-LABEL mongo.tools.version="${MONGO_TOOLS_VERSION}"
-LABEL gosu.version="${GOSU_VERSION}"
 LABEL go.build.version="${GO_VERSION}"
+LABEL go.crypto.version="${GO_CRYPTO_VERSION}"
+LABEL go.net.version="${GO_NET_VERSION}"
+LABEL gosu.version="${GOSU_VERSION}"
 LABEL js.yaml.version="${JS_YAML_VERSION}"
+LABEL mongo.driver.version="${MONGO_DRIVER_VERSION}"
+LABEL mongo.version="${MONGO_VERSION}"
+LABEL mongo.tools.version="${MONGO_TOOLS_VERSION}"
 
-# Update js-yaml to patched version (CVE-2025-64718) by replacing the file directly
+# Update js-yaml to patched version by replacing the file directly
 # Download and extract the specific version without installing npm and its dependencies
 RUN apt-get update && \
     apt-get upgrade -y && \
