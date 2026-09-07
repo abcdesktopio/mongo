@@ -7,11 +7,11 @@
 # Declare global ARGs (default values)
 # Can be overridden at build time with --build-arg
 # -------------------------------------------------------------------
-ARG GO_VERSION=1.26.5            # Correctif CVEs
-ARG GO_CRYPTO_VERSION=0.52.0     # Correctif CVEs
-ARG GO_NET_VERSION=0.55.0        # Correctif CVEs
+ARG GO_VERSION=1.26.6            # Correctif CVEs
+ARG GO_CRYPTO_VERSION=0.56.0     # Correctif CVEs
+ARG GO_NET_VERSION=0.57.0        # Correctif CVEs + Compatible with golang.org/x/crypto v0.56.0
 ARG GOSU_VERSION=1.19            # Correctif CVEs
-ARG JS_YAML_VERSION=3.15.0       # Correctif CVEs
+ARG JS_YAML_VERSION=3.15.1       # Correctif CVEs
 ARG MONGO_DRIVER_VERSION=1.17.7  # Correctif CVEs
 ARG MONGO_VERSION=8.0            # Final official MongoDB image version
 ARG MONGO_TOOLS_VERSION=100.13.0 # MongoDB Database Tools version to compile

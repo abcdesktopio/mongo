@@ -12,8 +12,8 @@
 #     --build-arg TRIVY_VERSION=0.72.0 \
 #     -t mongo-ci-tools ci/
 
-ARG HADOLINT_VERSION=v2.14.0
-ARG TRIVY_VERSION=0.72.0
+ARG HADOLINT_VERSION=v2.15.1
+ARG TRIVY_VERSION=0.74.0
 
 # --- Récupération des binaires depuis les images officielles épinglées ---
 FROM hadolint/hadolint:${HADOLINT_VERSION} AS hadolint-src
@@ -23,8 +23,8 @@ FROM aquasec/trivy:${TRIVY_VERSION} AS trivy-src
 FROM alpine:3.20
 
 # Re-déclarer les ARG après le FROM (portée perdue sinon)
-ARG HADOLINT_VERSION=v2.14.0
-ARG TRIVY_VERSION=0.72.0
+ARG HADOLINT_VERSION=v2.15.1
+ARG TRIVY_VERSION=0.74.0
 
 LABEL org.opencontainers.image.description="Outils de test CI/CD pour abcdesktopio/mongo : hadolint ${HADOLINT_VERSION} + trivy ${TRIVY_VERSION}"
 

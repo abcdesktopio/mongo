@@ -11,9 +11,9 @@ IMAGE             := $(IMAGE_NAME):$(IMAGE_TAG)
 # Name of the CI tooling image (hadolint + trivy)
 TESTS_IMAGE       ?= mongo-ci-tools
 # Hadolint version pinned in the CI image
-HADOLINT_VERSION  ?= v2.14.0
+HADOLINT_VERSION  ?= v2.15.1
 # Trivy version pinned in the CI image
-TRIVY_VERSION     ?= 0.72.0
+TRIVY_VERSION     ?= 0.74.0
 
 # Directory containing the CI Dockerfile and scripts
 TESTS_DIR         := tests
@@ -30,6 +30,20 @@ help: ## Show this help message
 .PHONY: build
 build: ## Build the mongo Docker image from the root Dockerfile
 	docker build -t $(IMAGE) .
+
+.PHONY: versions
+versions: ## Display the expected and effective versions available in the mongo image
+	@docker image inspect $(IMAGE) >/dev/null 2>&1 || { echo "Image not found: $(IMAGE). Run 'make build' first."; exit 1; }
+	@echo "Image: $(IMAGE)"
+	@docker image inspect $(IMAGE) --format 'go.build.version={{index .Config.Labels "go.build.version"}}{{printf "\n"}}go.crypto.version={{index .Config.Labels "go.crypto.version"}}{{printf "\n"}}go.net.version={{index .Config.Labels "go.net.version"}}{{printf "\n"}}gosu.version={{index .Config.Labels "gosu.version"}}{{printf "\n"}}js.yaml.version={{index .Config.Labels "js.yaml.version"}}{{printf "\n"}}mongo.driver.version={{index .Config.Labels "mongo.driver.version"}}{{printf "\n"}}mongo.tools.version={{index .Config.Labels "mongo.tools.version"}}{{printf "\n"}}mongo.version={{index .Config.Labels "mongo.version"}}'
+	@docker run --rm --entrypoint sh $(IMAGE) -c '\
+		printf "\\nEffective binary versions:\\n"; \
+		dpkg-query -W -f="mongodb-org-server \$${Version}\n" mongodb-org-server; \
+		mongosh --version; \
+		gosu --version; \
+		for tool in bsondump mongodump mongoexport mongofiles mongoimport mongorestore mongostat mongotop; do \
+			$$tool --version; \
+		done'
 
 # Stamp file used to track whether the CI tooling image is up to date.
 # Make compares its modification time against the source files listed as
@@ -63,9 +77,10 @@ shell: build-tests ## Open an interactive shell inside the CI tooling image (use
 test: hadolint trivy-fs trivy-image ## Run all checks: Dockerfile lint + filesystem scan + image scan (used in CI)
 
 .PHONY: clean
-clean: ## Remove generated reports, the CI tooling image and the build stamp
-	rm -rf $(REPORTS_DIR) $(TESTS_STAMP)
-	docker image rm $(TESTS_IMAGE) >/dev/null 2>&1 || true
+clean: ## Remove generated reports, the CI tooling image, the mongo image, and the build stamp
+	@rm -rf $(REPORTS_DIR) $(TESTS_STAMP)
+	@docker image rm $(TESTS_IMAGE) >/dev/null 2>&1 || true
+	@docker image rm $(IMAGE) >/dev/null 2>&1 || true
 
 .PHONY: hadolint
 hadolint: build-tests ## Lint the root Dockerfile with hadolint and produce JUnit + HTML reports
