@@ -120,9 +120,15 @@ LABEL mongo.tools.version="${MONGO_TOOLS_VERSION}"
 
 # Update js-yaml to patched version by replacing the file directly
 # Download and extract the specific version without installing npm and its dependencies
+# Fix CVEs: libcurl4t64 (CVE-2026-13608, CVE-2026-18924, CVE-2026-80230, CVE-2026-82209)
+# Fix CVEs: openssl/libssl3t64 (CVE-2026-84782, CVE-2026-35189, CVE-2026-54872, CVE-2026-75805, CVE-2026-75806, CVE-2026-77696)
 RUN apt-get update && \
     apt-get upgrade -y && \
-    apt-get install -y --no-install-recommends curl=8.5.* && \
+    apt-get install -y --no-install-recommends \
+        curl=8.5.0* \
+        libcurl4t64=8.5.0* \
+        openssl=3.0.13* \
+        libssl3t64=3.0.13* && \
     if [ -d /opt/js-yaml ]; then \
         curl -L -o /opt/js-yaml/js-yaml.tar.gz "https://registry.npmjs.org/js-yaml/-/js-yaml-${JS_YAML_VERSION}.tgz" && \
         tar -xzf /opt/js-yaml/js-yaml.tar.gz -C /opt/js-yaml && \
