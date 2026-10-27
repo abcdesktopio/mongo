@@ -7,9 +7,11 @@
 # Declare global ARGs (default values)
 # Can be overridden at build time with --build-arg
 # -------------------------------------------------------------------
-ARG GO_VERSION=1.26.6            # Correctif CVEs
-ARG GO_CRYPTO_VERSION=0.56.0     # Correctif CVEs
-ARG GO_NET_VERSION=0.57.0        # Correctif CVEs + Compatible with golang.org/x/crypto v0.56.0
+ARG GO_VERSION=1.26.10           # Correctif CVEs Go stdlib
+ARG GO_CRYPTO_VERSION=0.57.0     # Correctif CVEs + Version minimale requise par x/net v0.60.0
+ARG GO_NET_VERSION=0.60.0        # Correctif CVEs
+ARG GO_COMPRESS_VERSION=1.18.7   # Correctif CVEs
+ARG MOBY_SYS_USER_VERSION=0.4.1  # Correctif CVEs
 ARG GOSU_VERSION=1.19            # Correctif CVEs
 ARG JS_YAML_VERSION=3.15.2       # Correctif CVEs
 ARG MONGO_DRIVER_VERSION=1.17.7  # Correctif CVEs
@@ -26,6 +28,8 @@ FROM golang:${GO_VERSION} AS builder
 ARG GO_VERSION
 ARG GO_CRYPTO_VERSION
 ARG GO_NET_VERSION
+ARG GO_COMPRESS_VERSION
+ARG MOBY_SYS_USER_VERSION
 ARG GOSU_VERSION
 ARG JS_YAML_VERSION
 ARG MONGO_DRIVER_VERSION
@@ -52,6 +56,7 @@ RUN git checkout tags/${MONGO_TOOLS_VERSION} --quiet
 WORKDIR /src
 RUN go get golang.org/x/crypto@v${GO_CRYPTO_VERSION} && \
     go get golang.org/x/net@v${GO_NET_VERSION} && \
+    go get github.com/klauspost/compress@v${GO_COMPRESS_VERSION} && \
     go get go.mongodb.org/mongo-driver@v${MONGO_DRIVER_VERSION} && \
     go mod tidy && \
     go mod vendor
@@ -79,6 +84,7 @@ WORKDIR /tmp/gosu-${GOSU_VERSION}
 
 # Update dependencies for gosu and build with recommended flags
 RUN go get golang.org/x/crypto@v${GO_CRYPTO_VERSION} && \
+    go get github.com/moby/sys/user@v${MOBY_SYS_USER_VERSION} && \
     go mod tidy && \
     go mod vendor && \
     CGO_ENABLED=0 go build \
@@ -103,6 +109,8 @@ FROM mongo:${MONGO_VERSION}
 ARG GO_VERSION
 ARG GO_CRYPTO_VERSION
 ARG GO_NET_VERSION
+ARG GO_COMPRESS_VERSION
+ARG MOBY_SYS_USER_VERSION
 ARG GOSU_VERSION
 ARG JS_YAML_VERSION
 ARG MONGO_DRIVER_VERSION
@@ -112,6 +120,8 @@ ARG MONGO_TOOLS_VERSION
 LABEL go.build.version="${GO_VERSION}"
 LABEL go.crypto.version="${GO_CRYPTO_VERSION}"
 LABEL go.net.version="${GO_NET_VERSION}"
+LABEL go.compress.version="${GO_COMPRESS_VERSION}"
+LABEL moby.sys.user.version="${MOBY_SYS_USER_VERSION}"
 LABEL gosu.version="${GOSU_VERSION}"
 LABEL js.yaml.version="${JS_YAML_VERSION}"
 LABEL mongo.driver.version="${MONGO_DRIVER_VERSION}"
