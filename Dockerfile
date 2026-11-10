@@ -8,8 +8,8 @@
 # Can be overridden at build time with --build-arg
 # -------------------------------------------------------------------
 ARG GO_VERSION=1.26.10           # Correctif CVEs Go stdlib
-ARG GO_CRYPTO_VERSION=0.57.0     # Correctif CVEs + Version minimale requise par x/net v0.60.0
-ARG GO_NET_VERSION=0.60.0        # Correctif CVEs
+ARG GO_CRYPTO_VERSION=0.58.1-0.20261009181718-2f1f834330b2     # Correctif CVEs + Version minimale requise par x/net v0.60.0
+ARG GO_NET_VERSION=0.62.0        # Correctif CVEs
 ARG GO_COMPRESS_VERSION=1.18.7   # Correctif CVEs
 ARG MOBY_SYS_USER_VERSION=0.4.1  # Correctif CVEs
 ARG GOSU_VERSION=1.19            # Correctif CVEs
@@ -37,7 +37,11 @@ ARG MONGO_VERSION
 ARG MONGO_TOOLS_VERSION
 
 # Install dependencies, clone and build MongoDB tools
-RUN apt-get update && \
+# Fix CVEs: apt (CVE-2026-109518)
+RUN apt-get -o Acquire::Retries=0 update && \
+    apt-get -o Acquire::Retries=0 install -y --no-install-recommends --only-upgrade \
+        apt=3.0.4 \
+        libapt-pkg7.0=3.0.4 && \
     apt-get install -y --no-install-recommends \
         git=1:2.47.* \
         wget=1.25.* \
@@ -130,9 +134,13 @@ LABEL mongo.tools.version="${MONGO_TOOLS_VERSION}"
 
 # Update js-yaml to patched version by replacing the file directly
 # Download and extract the specific version without installing npm and its dependencies
+# Fix CVEs: apt (CVE-2026-109518)
 # Fix CVEs: libcurl4t64 (CVE-2026-13608, CVE-2026-18924, CVE-2026-80230, CVE-2026-82209)
 # Fix CVEs: openssl/libssl3t64 (CVE-2026-84782, CVE-2026-35189, CVE-2026-54872, CVE-2026-75805, CVE-2026-75806, CVE-2026-77696)
-RUN apt-get update && \
+RUN apt-get -o Acquire::Retries=0 update && \
+    apt-get -o Acquire::Retries=0 install -y --no-install-recommends --only-upgrade \
+        apt=2.8.4ubuntu0.1 \
+        libapt-pkg6.0t64=2.8.4ubuntu0.1 && \
     apt-get upgrade -y && \
     apt-get install -y --no-install-recommends \
         curl=8.5.0* \
