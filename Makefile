@@ -2,10 +2,10 @@ SHELL := /bin/sh
 .DEFAULT_GOAL := help
 
 # ------------------------------------------------------------------------------
-# Variables — all overridable at the command line, e.g.: make scan IMAGE_TAG=safe8.0
+# Variables — all overridable at the command line, e.g.: make scan IMAGE_TAG=safe8.2
 # ------------------------------------------------------------------------------
 IMAGE_NAME        ?= ghcr.io/abcdesktopio/mongo
-IMAGE_TAG         ?= safe8.0
+IMAGE_TAG         ?= safe8.2
 IMAGE             := $(IMAGE_NAME):$(IMAGE_TAG)
 
 # Name of the CI tooling image (hadolint + trivy)

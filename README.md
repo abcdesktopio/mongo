@@ -1,8 +1,8 @@
-# MongoDB Docker Image (8.0)
+# MongoDB Docker Image (8.2)
 
 ![CI](https://github.com/abcdesktopio/mongo/actions/workflows/docker-image.yml/badge.svg) ![Trivy](https://abcdesktopio.github.io/mongo/trivy.svg)
 
-Secure and up-to-date MongoDB 8.0 Docker image for development and production.
+Secure and up-to-date MongoDB 8.2 Docker image for development and production.
 
 ## Features
 
@@ -16,7 +16,7 @@ Secure and up-to-date MongoDB 8.0 Docker image for development and production.
 
 Pull the image:
 ```
-docker pull ghcr.io/abcdesktopio/mongo:safe8.0
+docker pull ghcr.io/abcdesktopio/mongo:safe8.2
 ```
 
 Run a container:
@@ -26,7 +26,7 @@ docker run -d \
   -p 27017:27017 \
   -e MONGO_INITDB_ROOT_USERNAME=admin \
   -e MONGO_INITDB_ROOT_PASSWORD=secret \
-  ghcr.io/abcdesktopio/mongo:safe8.0
+  ghcr.io/abcdesktopio/mongo:safe8.2
 ```
 
 Access the Mongo shell:

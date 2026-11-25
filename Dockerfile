@@ -33,7 +33,6 @@ ARG MOBY_SYS_USER_VERSION
 ARG GOSU_VERSION
 ARG JS_YAML_VERSION
 ARG MONGO_DRIVER_VERSION
-ARG MONGO_VERSION
 ARG MONGO_TOOLS_VERSION
 
 # Install dependencies, clone and build MongoDB tools
@@ -177,6 +176,8 @@ RUN for tool in bsondump mongodump mongoexport mongofiles mongoimport mongoresto
         chown ubuntu:ubuntu /usr/bin/$tool; \
         chmod 755 /usr/bin/$tool ; \
     done
+
+USER mongodb
 
 # The following instructions are inherited from the mongo:${MONGO_VERSION} base image
 # ENTRYPOINT, EXPOSE, and CMD are not redefined to maintain
