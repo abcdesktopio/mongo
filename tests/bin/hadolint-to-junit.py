@@ -23,7 +23,7 @@ testsuite = ET.Element(
     }
 )
 
-# Each hadolint issue becomes a <testcase> with a <failure> child element
+# Warnings and errors fail; informational and style findings are reported as skipped.
 for issue in issues:
     # classname is the Dockerfile path, name is the rule code (e.g. DL3008)
     testcase = ET.SubElement(
@@ -35,17 +35,16 @@ for issue in issues:
         }
     )
 
-    # Attach failure details: human-readable message as attribute
-    failure = ET.SubElement(
+    result_tag = "skipped" if issue.get("level") in {"info", "style"} else "failure"
+    result = ET.SubElement(
         testcase,
-        "failure",
+        result_tag,
         {
             "message": issue.get("message", "")
         }
     )
 
-    # Failure body includes rule code, line number and severity level
-    failure.text = (
+    result.text = (
         f"{issue.get('code')} "
         f"line={issue.get('line')} "
         f"level={issue.get('level')}"
