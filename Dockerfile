@@ -137,12 +137,14 @@ LABEL mongo.tools.version="${MONGO_TOOLS_VERSION}"
 # Fix CVEs: libcurl4t64 (CVE-2026-13608, CVE-2026-18924, CVE-2026-80230, CVE-2026-82209)
 # Fix CVEs: openssl/libssl3t64 (CVE-2026-84782, CVE-2026-35189, CVE-2026-54872, CVE-2026-75805, CVE-2026-75806, CVE-2026-77696)
 # Fix CVEs: libc6/libc-bin (CVE-2026-18374, CVE-2026-84243, CVE-2026-8674, CVE-2026-86805, CVE-2026-95818, CVE-2026-97399)
+# Fix CVEs: krb5-locales (CVE-2026-107364, CVE-2026-107708, CVE-2026-107778, CVE-2026-107884)
 RUN apt-get -o Acquire::Retries=0 update && \
     apt-get -o Acquire::Retries=0 install -y --no-install-recommends --only-upgrade \
         apt=2.8.4ubuntu0.1 \
         libapt-pkg6.0t64=2.8.4ubuntu0.1 \
         libc-bin=2.39-0ubuntu8.12 \
-        libc6=2.39-0ubuntu8.12 && \
+        libc6=2.39-0ubuntu8.12 \ 
+        krb5-locales=1.20.1-6ubuntu2.12 && \
     apt-get upgrade -y && \
     apt-get install -y --no-install-recommends \
         curl=8.5.0* \
