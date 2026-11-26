@@ -144,7 +144,7 @@ RUN apt-get -o Acquire::Retries=0 update && \
         libapt-pkg6.0t64=2.8.4ubuntu0.1 \
         libc-bin=2.39-0ubuntu8.12 \
         libc6=2.39-0ubuntu8.12 \
-        krb5-locales=1.20-1ubuntu0.1 && \
+        krb5-locales=1.20.1-6ubuntu2.12 && \
     apt-get upgrade -y && \
     apt-get install -y --no-install-recommends \
         curl=8.5.0* \
