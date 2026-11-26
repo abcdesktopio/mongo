@@ -177,7 +177,8 @@ RUN for tool in bsondump mongodump mongoexport mongofiles mongoimport mongoresto
         chmod 755 /usr/bin/$tool ; \
     done
 
-USER mongodb
+# mongodb user ID (corresponds to the official MongoDB image)
+USER 999
 
 # The following instructions are inherited from the mongo:${MONGO_VERSION} base image
 # ENTRYPOINT, EXPOSE, and CMD are not redefined to maintain
